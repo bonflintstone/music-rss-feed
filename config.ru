@@ -1,25 +1,32 @@
-require "nokogiri"
+require "pry"
+require "rack"
+require "rack/server"
 require "./file_walker"
 require "./xml_builder"
 
-MediaDirectory = ""
+class Rss
+  attr_reader :media_directory
 
-podcasts = FileWalker.new(MediaDirectory).walk
+  def initialize
+    @media_directory = "/media/frederik/Volume/Music"
+    @podcasts = FileWalker.new(@media_directory).walk
+  end
 
-map "/media" do
-  run Rack::File.new MediaDirectory
-end
+  def response env
+    podcast = @podcasts.select { |podcast| podcast.name == env["PATH_INFO"][1..-1] }
 
-def get_response env
-  actual = podcasts.filter { |podcast| podcast.name == env["PATH_INFO"] }
+    if podcast.length == 1
+      podcast = podcast.first
 
-  if actual.length == 1
-    actual = actual.first
-
-    [200, { "ContentType" => "text/xml" } ,[build_xml(podcast)]]
-  else
-    [404, nil, nil]
+      return [200, { "ContentType" => "text/xml" } ,[build_xml(podcast)]]
+    else
+      return [404, { "ContentType" => "text/plain" } , ["Not found"]]
+    end
   end
 end
 
-run -> (env) { get_response env }
+rss = Rss.new
+
+use Rack::Static, urls: ["/media"], root: rss.media_directory
+
+run ->(env) { rss.response env }

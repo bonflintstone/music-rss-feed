@@ -1,21 +1,29 @@
 class FileWalker
-  MusicFileTypes = ["mp3", "flac", "wma"]
+  MusicFileTypes = ["flac", "mp3", "wma", "Mp3", "MP3", "m4a"]
 
   attr_reader :podcasts
 
   def initialize root
-    @dir = Dir.open root
+    @root = root
     @podcasts = []
-
-    walk
   end
 
   def walk
-    @dir.each do |folder|
-      if folder.directory?
-        @podcasts << Podcast.new(folder.basename)
+    Dir.foreach(@root) do |name|
+      if name == "." || name == ".."
+        next
+      end
 
-        @podcasts.last.music_files << folder.glob("**/*.[mp3|wma|flac]")  
+      @podcasts << Podcast.new(name)
+
+      Dir.glob("#{@root}/#{name}/**/*").each do |file|
+        unless File.file? file
+          next
+        end
+
+        if MusicFileTypes.include? file.split(".").last
+          @podcasts.last.music_files << file
+        end
       end
     end
 
