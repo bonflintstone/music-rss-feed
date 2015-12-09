@@ -4,13 +4,13 @@ class FileWalker
   attr_reader :podcasts
 
   def initialize root
-    @root = root
+    @root = root + "/media"
     @podcasts = []
   end
 
   def walk
     Dir.foreach(@root) do |name|
-      if name == "." || name == ".."
+      if name == "." || name == ".." || File.file?("#{@root}/#{name}")
         next
       end
 
@@ -22,7 +22,7 @@ class FileWalker
         end
 
         if MusicFileTypes.include? file.split(".").last
-          @podcasts.last.music_files << file
+          @podcasts.last.music_files << {path: file.split(@root).last, size: File.stat(file).size, name: File.basename(file, ".*")}
         end
       end
     end

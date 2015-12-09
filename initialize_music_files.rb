@@ -11,7 +11,7 @@ unless path[-1] == "/"
   path << "/"
 end
 
-files = Dir.glob "#{path}**/**"
+files = Dir.glob("#{path}**/**").reverse #depth first
 
 files.each do |file|
   puts "At file #{file}"
@@ -21,10 +21,27 @@ files.each do |file|
   new_name = name.parameterize
 
   if new_name != name
-    if File.directory? file
-      FileUtils.mv file, file[0 ... - File.basename(file).length] + new_name + File.extname(file)
-    else
-      File.rename(file, file[0 ... - File.basename(file).length] + new_name + File.extname(file))
+    begin
+      if new_name == ""
+        raise "Name can not be ''"
+      end
+      if File.directory? file
+        new_full_path = file[0 ... - File.basename(file).length] + new_name
+        FileUtils.mv file, new_full_path
+      else
+        new_full_path = file[0 ... - File.basename(file).length] + new_name + File.extname(file)
+        File.rename file, new_full_path
+      end
+    rescue
+      puts "\tFailed to rename File\t'#{file}'\tto\t'#{new_full_path}'"
+      puts "\tWith Exception:\t#{$!}"
+      puts "\t[CTRL] + [C] to abort"
+      puts "\t[Enter] to skip File"
+      print "\tEnter new name manually:\t"
+      new_name = STDIN.gets.chomp
+      if new_name != ""
+        retry
+      end
     end
   end
 
