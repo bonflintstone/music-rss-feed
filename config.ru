@@ -1,12 +1,12 @@
-require "pry"
 require "rack"
 require "rack/server"
-require "./file_walker"
-require "./xml_builder"
 require "rack/auth/abstract/handler"
 require "rack/auth/abstract/request"
+
 require "./secret"
 require "./index_builder"
+require "./file_walker"
+require "./xml_builder"
 
 class Rss
   attr_reader :media_directory
