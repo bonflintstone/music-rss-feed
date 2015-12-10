@@ -5,8 +5,10 @@ def build_index podcasts, domain
     doc.html do
       doc.body do
         podcasts.each do |podcast|
-          doc.a href: "#https://{domain}/#{podcast.name}.xml"
-            doc.text podcast.name
+          doc.p do
+            doc.a href: "http://#{domain}/#{podcast.name}.xml" do
+              doc.text podcast.name
+            end
           end
         end
       end

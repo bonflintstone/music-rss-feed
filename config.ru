@@ -5,7 +5,8 @@ require "./file_walker"
 require "./xml_builder"
 require "rack/auth/abstract/handler"
 require "rack/auth/abstract/request"
-require "secret"
+require "./secret"
+require "./index_builder"
 
 class Rss
   attr_reader :media_directory
@@ -18,7 +19,7 @@ class Rss
 
   def response env
     if ["/", "/index", "/index.html"].include? env["PATH_INFO"]
-      return [200, { "ContentType" => "text/html" } ,[build_html(@podcasts, @domain)]]
+      return [200, { "ContentType" => "text/html" } ,[build_index(@podcasts, @domain)]]
     end
 
     podcast = @podcasts.select { |podcast| "/" + podcast.name + ".xml" == env["PATH_INFO"] }
@@ -34,7 +35,7 @@ class Rss
 end
 
 use Rack::Auth::Basic, "Restricted Area" do |username, password|
-  [username, password] == user.values
+  valid? username, password
 end
 
 rss = Rss.new
