@@ -1,4 +1,6 @@
 require "nokogiri"
+require "active_support"
+require "active_support/core_ext"
 
 def build_xml podcast, domain
   builder = Nokogiri::XML::Builder.new do |xml|
@@ -6,13 +8,13 @@ def build_xml podcast, domain
       xml.channel do
         xml.title podcast.name
         xml.description podcast.name
-        xml.link "#https://{domain}/#{podcast.name}.xml"
+        xml.link "http://#{domain}/#{podcast.name}.xml"
         xml.language "en"
 
         xml.atom:link
 
         podcast.music_files.each do |music_file|
-          url = "#https://{domain}/media#{music_file[:path]}"
+          url = "http://#{domain}/media#{music_file[:path]}"
 
           xml.item do
             xml.title File.basename(music_file[:name], ".*")

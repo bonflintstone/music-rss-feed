@@ -10,8 +10,8 @@ class Rss
   attr_reader :media_directory
 
   def initialize
-    @media_directory = "/media/frederik/Volume"
-    @domain = "79.248.196.230"
+    @media_directory = "/media/Volume"
+    @domain = "79.248.192.83"
     @podcasts = FileWalker.new(@media_directory).walk
   end
 
@@ -37,9 +37,9 @@ class Rss
   end
 end
 
-#use Rack::Auth::Basic, "Restricted Area" do |username, password|
-#  [username, password] == ['bonflintstone', 'musicislovebaby']
-#end
+use Rack::Auth::Basic, "Restricted Area" do |username, password|
+  [username, password] == ['bonflintstone', 'musicislove']
+end
 
 rss = Rss.new
 
