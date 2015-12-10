@@ -3,8 +3,9 @@ require "rack"
 require "rack/server"
 require "./file_walker"
 require "./xml_builder"
-require 'rack/auth/abstract/handler'
-require 'rack/auth/abstract/request'
+require "rack/auth/abstract/handler"
+require "rack/auth/abstract/request"
+require "secret"
 
 class Rss
   attr_reader :media_directory
@@ -16,8 +17,8 @@ class Rss
   end
 
   def response env
-    if env["PATH_INFO"] == "/"
-      return [200, { "ContentType" => "text/plain" } ,[list_podcasts]]
+    if ["/", "/index", "/index.html"].include? env["PATH_INFO"]
+      return [200, { "ContentType" => "text/html" } ,[build_html(@podcasts, @domain)]]
     end
 
     podcast = @podcasts.select { |podcast| "/" + podcast.name + ".xml" == env["PATH_INFO"] }
@@ -30,15 +31,10 @@ class Rss
       return [404, { "ContentType" => "text/plain" } , ["Not found"]]
     end
   end
-
-  def list_podcasts
-    podcasts = Dir.glob(@media_directory + "/media/*").map { |path| File.basename(path) }
-    return podcasts.join "\n"
-  end
 end
 
 use Rack::Auth::Basic, "Restricted Area" do |username, password|
-  [username, password] == ['bonflintstone', 'musicislove']
+  [username, password] == user.values
 end
 
 rss = Rss.new
