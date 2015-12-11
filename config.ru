@@ -27,7 +27,7 @@ class Rss
     if podcast.length == 1
       podcast = podcast.first
 
-      return [200, { "ContentType" => "text/xml" } ,[build_xml(podcast, @domain)]]
+      return [200, { "ContentType" => "text/xml" } ,[build_xml(podcast, @domain, "#{_username}:#{_password}@")]]
     else
       return [404, { "ContentType" => "text/plain" } , ["Not found"]]
     end
@@ -35,7 +35,7 @@ class Rss
 end
 
 use Rack::Auth::Basic, "Restricted Area" do |username, password|
-  valid? username, password
+  username, password == _username, _password
 end
 
 rss = Rss.new
