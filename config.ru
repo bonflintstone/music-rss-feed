@@ -13,7 +13,7 @@ class Rss
 
   def initialize
     @media_directory = "/media/Volume"
-    @domain = "79.248.192.83"
+    @domain = "bonflintstone.noip.me"
     @podcasts = FileWalker.new(@media_directory).walk
   end
 
