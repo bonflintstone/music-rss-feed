@@ -35,7 +35,7 @@ class Rss
 end
 
 use Rack::Auth::Basic, "Restricted Area" do |username, password|
-  username, password == _username, _password
+  [username, password] == [_username, _password]
 end
 
 rss = Rss.new
