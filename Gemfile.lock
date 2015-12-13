@@ -20,6 +20,8 @@ GEM
       method_source (~> 0.8.1)
       slop (~> 3.4)
     rack (1.6.4)
+    rack-ssl (1.4.1)
+      rack
     slop (3.6.0)
     thread_safe (0.3.5)
     tzinfo (1.2.2)
@@ -33,6 +35,7 @@ DEPENDENCIES
   nokogiri
   pry
   rack
+  rack-ssl
 
 BUNDLED WITH
    1.10.6
