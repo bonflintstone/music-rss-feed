@@ -2,7 +2,6 @@ require "rack"
 require "rack/server"
 require "rack/auth/abstract/handler"
 require "rack/auth/abstract/request"
-require Â"rack/ssl"
 
 require "./secret"
 require "./index_builder"
