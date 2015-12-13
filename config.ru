@@ -34,6 +34,7 @@ class Rss
   end
 end
 
+use Rack::SSL
 use Rack::Auth::Basic, "Restricted Area" do |username, password|
   [username, password] == [_username, _password]
 end
