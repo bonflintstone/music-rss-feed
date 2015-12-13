@@ -17,9 +17,9 @@ class Rss
     @podcasts = FileWalker.new(@media_directory).walk
   end
 
-  def response env
+  def response(env)
     if ["/", "/index", "/index.html"].include? env["PATH_INFO"]
-      return [200, { "ContentType" => "text/html" } ,[build_index(@podcasts, @domain)]]
+      return [200, { "ContentType" => "text/html" } ,[build_index(@podcasts, @domain, "#{_username}:#{_password}@")]]
     end
 
     podcast = @podcasts.select { |podcast| "/" + podcast.name + ".xml" == env["PATH_INFO"] }
@@ -34,7 +34,6 @@ class Rss
   end
 end
 
-use Rack::SSL
 use Rack::Auth::Basic, "Restricted Area" do |username, password|
   [username, password] == [_username, _password]
 end

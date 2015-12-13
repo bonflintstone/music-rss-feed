@@ -2,7 +2,7 @@ require "nokogiri"
 require "active_support"
 require "active_support/core_ext"
 
-def build_xml podcast, domain, credentials_string
+def build_xml(podcast, domain, credentials_string)
   builder = Nokogiri::XML::Builder.new do |xml|
     xml.rss version: "2.0", "xmlns:atom": "http://www.w3.org/2005/Atom" do
       xml.channel do
